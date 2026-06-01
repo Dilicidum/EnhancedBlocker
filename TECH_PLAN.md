@@ -9,7 +9,7 @@
 | .NET SDK | **10.0.300** | Backend (target `net10.0`) |
 | Node | 24.14.0 | Extension build |
 | npm | 11.9.0 | Extension deps |
-| Angular CLI | **20.3.4** | Extension UI |
+| Angular CLI | **21.2.5** | Extension UI |
 | Python | 3.12.9 | ML sidecar (M2) |
 | git | 2.53.0 | VCS |
 
@@ -22,7 +22,7 @@ EnhancedBlocker/
     EnhancedBlocker.Api/        # ASP.NET Core Minimal API (Kestrel @ 127.0.0.1)
     EnhancedBlocker.Core/       # domain entities + decision cascade (reusable)
     EnhancedBlocker.Data/       # EF Core DbContext + migrations (reusable)
-  extension/                    # Angular 20 workspace + esbuild for SW/content
+  extension/                    # Angular 21 workspace + esbuild for SW/content
     src/
       ui/                       # Angular app: popup, options, block surfaces
       worker/background.ts      # MV3 service worker (esbuild → ESM)
@@ -113,13 +113,13 @@ Registered in DI in order; adding M2 = one `AddScoped<IDecisionTier, Tier1MlTier
 
 ---
 
-## Extension (Angular 20 + MV3)
+## Extension (Angular 21 + MV3)
 
 **Manifest V3**, three code kinds with different constraints, so **two build tools**:
 
 | Part | Tech | Why |
 |---|---|---|
-| Popup / Options / Block UI | **Angular 20** (one app, route per surface) | Rich UI, your stack |
+| Popup / Options / Block UI | **Angular 21** (one app, route per surface) | Rich UI, your stack |
 | `background.ts` (service worker) | **esbuild** → ESM (`"type":"module"`) | SW is one file, ephemeral; no Angular |
 | `content.ts` (content script) | **esbuild** → IIFE | Content scripts can't use runtime ESM imports |
 
