@@ -1,0 +1,42 @@
+{
+  "manifest_version": 3,
+  "name": "EnhancedBlocker",
+  "version": "0.1.0",
+  "description": "Context-aware website blocker + time tracker (M1: tracking + Tier-0 blocker).",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5zspoJF8j3HZsesfzc6H5lErjlyozh0fyTErstvWuJym77PZcmTdy7c8pUyYP50w+8x73aXA0sm6MTvsKUp18kUXX5nSvBHK0vTWVSv/JK6lE7kd13/3eGGsMuFN4dY24Z9oVjp5knGLYhIyyDF5K5741FeXVxH+bflIvNcRqA+y1CdkP6GIOlXs/ViGhuzLAuGZ4mc4sfjwNO0hN/ptOmJwqn47zJWVu01eS5fbUNfyvV7OYzYk+l0QCfL1lh50tagr2U94vye8v2pfrhPM8GLlUM6MMF9bPoKimA9SD1OUfP6SoUu31sHEfloRZEfu5dO5PVtFDR2MCTLh4H3pNwIDAQAB",
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["content.js"],
+      "run_at": "document_start",
+      "all_frames": false
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "EnhancedBlocker",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "options_page": "options.html",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "permissions": ["webNavigation", "storage", "tabs", "scripting"],
+  "host_permissions": ["http://127.0.0.1/*"],
+  "web_accessible_resources": [
+    {
+      "resources": ["block.html", "main.js", "styles.css"],
+      "matches": ["http://*/*", "https://*/*"]
+    }
+  ]
+}

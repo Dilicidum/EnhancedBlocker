@@ -1,0 +1,43 @@
+<main class="popup">
+  <h1>EnhancedBlocker</h1>
+
+  <section class="status" [class.active]="store.active()">
+    @if (store.active()) {
+      <span class="dot on"></span>
+      <span>Focusing: <strong>{{ store.intent() }}</strong></span>
+    } @else {
+      <span class="dot off"></span>
+      <span>No active focus session</span>
+    }
+  </section>
+
+  <label class="field">
+    <span>Declared intent</span>
+    <input
+      type="text"
+      placeholder="e.g. writing a Rust parser"
+      [value]="store.intent()"
+      [disabled]="store.active()"
+      (input)="onIntentInput($any($event.target).value)"
+    />
+  </label>
+
+  <button
+    class="toggle"
+    [class.stop]="store.active()"
+    [disabled]="store.loading()"
+    (click)="toggle()"
+  >
+    @if (store.loading()) {
+      Working…
+    } @else if (store.active()) {
+      Stop focus
+    } @else {
+      Start focus
+    }
+  </button>
+
+  @if (store.error(); as err) {
+    <p class="error">{{ err }}</p>
+  }
+</main>

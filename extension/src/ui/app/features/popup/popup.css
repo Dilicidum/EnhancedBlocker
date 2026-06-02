@@ -1,0 +1,81 @@
+.popup {
+  width: 300px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-family: system-ui, sans-serif;
+}
+
+h1 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: #f1f3f5;
+}
+
+.status.active {
+  background: #e6f4ea;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+}
+
+.dot.on {
+  background: #2e7d32;
+}
+
+.dot.off {
+  background: #9aa0a6;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+}
+
+.field input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.toggle {
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  background: #1a73e8;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.toggle.stop {
+  background: #d93025;
+}
+
+.toggle:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.error {
+  color: #d93025;
+  font-size: 12px;
+  margin: 0;
+}

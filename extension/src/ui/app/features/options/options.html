@@ -1,0 +1,87 @@
+<main class="options">
+  <h1>EnhancedBlocker — Options</h1>
+
+  <section class="card">
+    <h2>Backend connection</h2>
+    <label class="field">
+      <span>API base URL</span>
+      <input type="text" [value]="baseUrl()" (input)="baseUrl.set($any($event.target).value)" />
+    </label>
+    <label class="field">
+      <span>X-EB-Token</span>
+      <input type="text" [value]="token()" (input)="token.set($any($event.target).value)" />
+    </label>
+    <button class="primary" (click)="saveSettings()">Save settings</button>
+    @if (settingsSaved()) {
+      <span class="saved">Saved.</span>
+    }
+  </section>
+
+  <section class="card">
+    <h2>Add Tier-0 rule</h2>
+    <div class="form-row">
+      <input
+        class="grow"
+        type="text"
+        placeholder="pattern (e.g. reddit.com or https://news.site/page)"
+        [value]="pattern()"
+        (input)="pattern.set($any($event.target).value)"
+      />
+      <select [value]="match()" (change)="match.set($any($event.target).value)">
+        <option value="Domain">Domain</option>
+        <option value="Exact">Exact</option>
+      </select>
+      <select [value]="kind()" (change)="kind.set($any($event.target).value)">
+        <option value="Block">Block</option>
+        <option value="Allow">Allow</option>
+      </select>
+      <input
+        type="text"
+        placeholder="category (optional)"
+        [value]="category()"
+        (input)="category.set($any($event.target).value)"
+      />
+      <button class="primary" (click)="addRule()">Add</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Rules</h2>
+    @if (store.loading()) {
+      <p>Loading…</p>
+    }
+    @if (store.error(); as err) {
+      <p class="error">{{ err }}</p>
+    }
+    @if (store.rules().length === 0 && !store.loading()) {
+      <p class="muted">No rules yet.</p>
+    } @else {
+      <table>
+        <thead>
+          <tr>
+            <th>Pattern</th>
+            <th>Match</th>
+            <th>Kind</th>
+            <th>Category</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (rule of store.rules(); track rule.id ?? rule.pattern) {
+            <tr>
+              <td class="mono">{{ rule.pattern }}</td>
+              <td>{{ rule.match }}</td>
+              <td>{{ rule.kind }}</td>
+              <td>{{ rule.category || '—' }}</td>
+              <td>
+                <button class="danger" (click)="remove(rule)" [disabled]="!rule.id">
+                  Delete
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </section>
+</main>

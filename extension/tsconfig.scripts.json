@@ -1,0 +1,11 @@
+/* Type-check config for the esbuild-bundled worker + content scripts. */
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./out-tsc/scripts",
+    "types": ["chrome"],
+    "lib": ["ES2022", "DOM", "DOM.Iterable", "WebWorker"],
+    "noEmit": true
+  },
+  "include": ["src/worker/**/*.ts", "src/content/**/*.ts"]
+}
