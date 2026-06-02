@@ -1,0 +1,12 @@
+# Python ML sidecar local artifacts
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# Downloaded model weights / caches (when the heavy deps are installed)
+.cache/
+models/
+*.bin
+*.safetensors

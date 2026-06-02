@@ -1,0 +1,16 @@
+# EnhancedBlocker ML sidecar — light runtime deps (skeleton).
+#
+# These are the ONLY packages the M2 skeleton imports. Installing them does not
+# pull any multi-gigabyte model weights, so the service runs immediately.
+#
+# The heavy model dependencies (sentence-transformers, transformers, torch,
+# scikit-learn) live in requirements-ml.txt and are installed only when the
+# real models are wired in. See README.md.
+
+fastapi>=0.111,<1.0
+uvicorn[standard]>=0.30,<1.0
+pydantic>=2.7,<3.0
+
+# Dev / test
+pytest>=8.0,<9.0
+httpx>=0.27,<1.0   # required by fastapi.testclient (Starlette TestClient)

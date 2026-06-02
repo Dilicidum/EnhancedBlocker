@@ -1,0 +1,17 @@
+# EnhancedBlocker ML sidecar — heavy model deps (NOT needed for the skeleton).
+#
+# Install these only when swapping the stub endpoints for real models. They pull
+# multi-gigabyte downloads (torch wheels + model weights on first use).
+#
+#     pip install -r requirements.txt -r requirements-ml.txt
+#
+# Models (per ARCHITECTURE.md / TECH_PLAN.md):
+#   - embeddings : all-MiniLM-L6-v2 (384-dim, CPU)            via sentence-transformers
+#   - zero-shot  : valhalla/distilbart-mnli-12-3 (CPU)         via transformers
+#                  (or facebook/bart-large-mnli for higher quality)
+#   - scoring    : nearest-centroid → logistic regression      via scikit-learn
+
+sentence-transformers>=3.0,<4.0
+transformers>=4.40,<5.0
+scikit-learn>=1.5,<2.0
+# torch is a transitive dep of the above; pin/select a CPU wheel at setup if needed.
