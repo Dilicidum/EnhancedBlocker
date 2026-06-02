@@ -20,7 +20,7 @@ Goal: full plumbing end-to-end; start collecting events + labels. Forward-compat
 
 | WP | Title | Scope | Deps |
 |----|-------|-------|------|
-| **WP1** | Backend: Core + Data | Solution + `Core` (entities) + `Data` (EF Core DbContext, SQLite, first migration). | — |
+| **WP1** | Backend: onion skeleton | Solution + Domain/Application/Infrastructure/Api (onion refs); entities w/ `Create`/`Update` factories; EF Core DbContext + PostgreSQL (Npgsql) + first migration. | — |
 | **WP2** | Backend: API + cascade | `DecisionService` + `IDecisionTier` + `Tier0RuleTier`; Minimal API endpoints (`/events`, `/decision`, `/feedback`, `/rules`, `/focus/*`, `/health`); CORS + token middleware. | WP1 |
 | **WP3** | Extension: skeleton + build | Angular 21 workspace; `build-extension.mjs` (ng build + esbuild for SW/content + asset copy); `manifest.json`; load-unpacked works. | — |
 | **WP4** | Extension: runtime | Service worker (nav logging → `/events`, decision call → `/decision`); content script (document_start "checking…" overlay → reveal / block iframe). | WP2, WP3 |
