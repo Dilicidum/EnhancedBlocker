@@ -1,0 +1,35 @@
+<main class="block">
+  <div class="panel">
+    <h1>Blocked</h1>
+
+    @if (thumbnail(); as thumb) {
+      <img class="thumb" [src]="thumb" alt="preview" />
+    }
+
+    <p class="title">{{ title() }}</p>
+    <p class="reason">{{ reason() }}</p>
+
+    <div class="link-row">
+      @if (unlocked()) {
+        <a class="content-link" [href]="url()">{{ url() }}</a>
+      } @else {
+        <!-- Non-clickable until "Bad call" is pressed. -->
+        <span class="content-link locked" aria-disabled="true">{{ url() }}</span>
+      }
+    </div>
+
+    <div class="actions">
+      <button class="good" [disabled]="busy()" (click)="goodCall()">
+        Good call
+      </button>
+      <button class="bad" [disabled]="busy()" (click)="badCall()">
+        Bad call (false positive)
+      </button>
+    </div>
+
+    <p class="hint">
+      The link unlocks only after you mark this a false positive — that click is
+      the label the model learns from.
+    </p>
+  </div>
+</main>
