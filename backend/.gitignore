@@ -1,0 +1,11 @@
+# .NET build output
+bin/
+obj/
+
+# User-specific / local
+*.user
+appsettings.*.local.json
+
+# Rider / VS
+.idea/
+.vs/
