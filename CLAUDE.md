@@ -9,11 +9,12 @@ Pet project. Workflow + coding conventions below. Read before writing code or ed
 ## Backend (.NET 10, PostgreSQL)
 - **Onion architecture.** Layers, dependencies point inward only:
   - `Domain` — entities, value objects, domain logic. No external/framework deps.
-  - `Application` — use cases, abstractions (repository/port interfaces), orchestration. Depends only on Domain.
+  - `Application` — use cases via **CQRS**, abstractions (repository/port interfaces), orchestration. Depends only on Domain.
   - `Infrastructure` — EF Core, PostgreSQL, external services, repository implementations. Depends on Application/Domain.
   - `Api` (Presentation) — ASP.NET Core host/endpoints. Depends on Application (+ Infrastructure via DI at composition root only).
 - **EF Core with PostgreSQL** (`Npgsql.EntityFrameworkCore.PostgreSQL`). Not SQLite.
-- **OneOf** — use the `OneOf` library for results/unions where it fits (e.g. decision outcomes, success/error returns) instead of throwing or null-returns.
+- **CQRS in the Application layer.** Each use case is a separate **command** (writes) or **query** (reads) with its own handler — no fat service classes. Dispatched via a mediator (e.g. MediatR) or a thin custom dispatcher. API endpoints are thin: build the command/query, send it, map the result.
+- **OneOf** — use the `OneOf` library for results/unions where it fits (e.g. command/query results, decision outcomes, success/error returns) instead of throwing or null-returns. Handlers return `OneOf<...>`.
 - **Domain classes expose static `Create` / `Update` factory methods** for construction and mutation — no public parameterless ctors / open setters. Encapsulate invariants there.
 
 ## Frontend (Angular 21)

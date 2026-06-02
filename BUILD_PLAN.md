@@ -9,7 +9,7 @@
 |---|---|---|
 | Browser layer | **TypeScript, Chrome MV3** | Mandatory; Angular used for the extension's UI pages. |
 | Extension UI | **Angular** (standalone + NgRx Signals) | Popup, block screen, options page. |
-| Backend | **.NET (ASP.NET Core)**, localhost, **onion architecture** | Always-on, lightweight. Storage + decision cascade + reports + Python lifecycle. OneOf + domain `Create`/`Update` factories. |
+| Backend | **.NET (ASP.NET Core)**, localhost, **onion architecture + CQRS** | Always-on, lightweight. Storage + decision cascade + reports + Python lifecycle. CQRS handlers, OneOf, domain `Create`/`Update` factories. |
 | Storage | **PostgreSQL + EF Core** (Npgsql) | Local Postgres instance. |
 | ML | **Python (FastAPI) sidecar**, on-demand | Committed: ML lives in Python (sentence-transformers + zero-shot + scikit-learn). Arrives in M2, but M1 is built with the seams so adding it is **additive, not a rewrite** (see below). |
 | Reports LLM (later) | TBD | Local (Ollama) vs cloud, decided at Part 3. |
@@ -97,7 +97,7 @@ Goal: prove the full plumbing end-to-end and start collecting data + labels.
 
 **Backend (.NET — onion)**
 - [ ] Solution with Domain/Application/Infrastructure/Api projects; EF Core + PostgreSQL (Npgsql); entities above with `Create`/`Update` factories; migrations.
-- [ ] `POST /events` (logging), `POST /focus/start|stop`, `GET/POST/DELETE /rules`, `POST /feedback`.
+- [ ] CQRS commands/queries + handlers for each use case (LogEvents, Decide, RecordFeedback, ListRules/AddRule/DeleteRule, StartFocus/StopFocus); endpoints `POST /events`, `POST /focus/start|stop`, `GET/POST/DELETE /rules`, `POST /feedback` are thin pass-throughs.
 - [ ] `IDecisionTier` abstraction + ordered cascade; ship **only `Tier0Rules`** (exact/domain match vs Rule + CategoryDomainCache → allow/block + reason). M2 appends `Tier1Ml`.
 - [ ] `POST /decision` returns `{outcome, tier, reason, score?}` and supports a **pending/checking** outcome (for M2's slow path), even though Tier-0 always resolves instantly now.
 - [ ] API guard token + CORS for the extension origin.

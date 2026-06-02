@@ -20,7 +20,7 @@ EnhancedBlocker/
   EnhancedBlocker.sln
   backend/                          # Onion architecture (deps point inward)
     EnhancedBlocker.Domain/         # entities, value objects, domain logic. Create/Update factories. No deps.
-    EnhancedBlocker.Application/    # use cases + port interfaces (IRuleRepo, IDecisionTier...). Depends: Domain.
+    EnhancedBlocker.Application/    # CQRS commands/queries + handlers + port interfaces (IRuleRepo, IDecisionTier...). Depends: Domain.
     EnhancedBlocker.Infrastructure/ # EF Core + PostgreSQL, repo impls, Python client. Depends: Application, Domain.
     EnhancedBlocker.Api/            # ASP.NET Core host/endpoints (Kestrel @ 127.0.0.1). Composition root.
   extension/                    # Angular 21 workspace + esbuild for SW/content
@@ -43,7 +43,8 @@ EnhancedBlocker/
 **Style:** ASP.NET Core **Minimal API**, Kestrel bound to `http://127.0.0.1:<port>` (loopback only). HTTP is fine for localhost; no cert hassle.
 
 **Conventions (see CLAUDE.md):**
-- **OneOf** for results/unions where it fits (decision outcomes, success/error returns) — no throwing/null-returning for expected branches.
+- **CQRS** in Application: one command/query + handler per use case, dispatched via mediator (MediatR) or thin dispatcher. Endpoints are thin (build → send → map).
+- **OneOf** for results/unions where it fits (handler results, decision outcomes, success/error) — no throwing/null-returning for expected branches.
 - **Domain classes use static `Create` / `Update` factory methods**; no public ctors / open setters. Invariants live in the factories.
 
 **NuGet packages**
@@ -97,7 +98,7 @@ public sealed class FocusSession
 `IntentEmbedding` and `FeaturesJson` are nullable now → no migration when M2 fills them.
 
 ### Decision cascade (the key seam) — `EnhancedBlocker.Application`
-`OneOf` models a tier's verdict; a tier either decides or defers (`Defer`).
+Exposed as a CQRS **query** (`DecideQuery` → `DecideQueryHandler`) that runs the cascade below. `OneOf` models a tier's verdict; a tier either decides or defers (`Defer`).
 ```csharp
 enum Outcome { Allow, Block, Pending }              // Pending exists for M2's slow path
 record DecisionContext(string Url, string Domain, string? Title, string? Text,
@@ -123,17 +124,20 @@ class DecisionService(IEnumerable<IDecisionTier> tiers) {
 - **M2:** append `Tier1MlTier` — HttpClient to Python; may return `Pending` while the sidecar warms.
 Registered in DI in order; adding M2 = one `AddScoped<IDecisionTier, Tier1MlTier>()` line.
 
-### API endpoints (Minimal API)
-| Method | Route | Body / Query | Returns |
-|---|---|---|---|
-| POST | `/events` | `Event[]` (batch) | 202 |
-| POST | `/decision` | `DecisionContext` | `TierResult` |
-| POST | `/feedback` | `{url,title,decision,source}` | 201 (writes Label) |
-| GET/POST/DELETE | `/rules` | `Rule` | rule list / 201 / 204 |
-| POST | `/focus/start` | `{intent}` | `{focusSessionId}` |
-| POST | `/focus/stop` | — | 200 |
-| GET | `/health` | — | `{status}` |
-| GET | `/reports/...` | — | M4 |
+### API endpoints (Minimal API) — each maps to a CQRS command/query
+| Method | Route | CQRS message | Body / Query | Returns |
+|---|---|---|---|---|
+| POST | `/events` | `LogEventsCommand` | `Event[]` (batch) | 202 |
+| POST | `/decision` | `DecideQuery` | `DecisionContext` | `TierResult` |
+| POST | `/feedback` | `RecordFeedbackCommand` | `{url,title,decision,source}` | 201 (writes Label) |
+| GET | `/rules` | `ListRulesQuery` | — | rule list |
+| POST/DELETE | `/rules` | `AddRuleCommand` / `DeleteRuleCommand` | `Rule` / id | 201 / 204 |
+| POST | `/focus/start` | `StartFocusCommand` | `{intent}` | `{focusSessionId}` |
+| POST | `/focus/stop` | `StopFocusCommand` | — | 200 |
+| GET | `/health` | — (no handler) | — | `{status}` |
+| GET | `/reports/...` | `*Query` | — | M4 |
+
+Endpoints are thin: bind → send command/query via mediator → map the `OneOf` result to HTTP.
 
 `/focus/start` is the shared seam for the **Pomodoro app** to drive sessions; reads of `Event`/`FocusSession` are the seam for the **statistics app**.
 
