@@ -1,5 +1,4 @@
 using OneOf;
-using EnhancedBlocker.Application.Messaging;
 using EnhancedBlocker.Application.Ports;
 using EnhancedBlocker.Domain;
 
@@ -17,11 +16,9 @@ public sealed record LogEventInput(
     long? DurationMs);
 
 /// <summary>Logs a batch of tracked events. Returns the number persisted.</summary>
-public sealed record LogEventsCommand(IReadOnlyList<LogEventInput> Events)
-    : IRequest<OneOf<int, ValidationError>>;
+public sealed record LogEventsCommand(IReadOnlyList<LogEventInput> Events);
 
 public sealed class LogEventsCommandHandler(IEventStore store)
-    : IRequestHandler<LogEventsCommand, OneOf<int, ValidationError>>
 {
     public async Task<OneOf<int, ValidationError>> Handle(LogEventsCommand request, CancellationToken ct)
     {

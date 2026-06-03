@@ -10,20 +10,19 @@ nullable columns and the pluggable cascade).
 | Project | Role |
 |---|---|
 | `EnhancedBlocker.Domain` | Entities (`Event`, `FocusSession`, `Rule`, `CategoryDomain`, `Label`, `DecisionLog`) as classes with **private setters** + static `Create`/`Update` factories returning `OneOf<T, ValidationError>`. Enums. No framework deps except `OneOf`. |
-| `EnhancedBlocker.Application` | CQRS commands/queries + handlers, port interfaces, the decision cascade (`DecideQueryHandler`), and a thin in-house dispatcher (`ISender`). Depends only on Domain. |
+| `EnhancedBlocker.Application` | CQRS commands/queries + handlers, port interfaces, and the decision cascade (`DecideQueryHandler`). Handlers are injected and called directly (no mediator). Depends only on Domain. |
 | `EnhancedBlocker.Infrastructure` | EF Core (`AppDbContext`) on **PostgreSQL/Npgsql**, entity configs, repository adapters, and `Tier0RuleTier`. The initial migration lives here. Depends on Application + Domain. |
 | `EnhancedBlocker.Api` | ASP.NET Core **Minimal API** host (composition root). Loopback-only Kestrel, token middleware, CORS, thin endpoints. |
 | `EnhancedBlocker.Tests` | xUnit: domain factories, the cascade handler, and Tier-0 matching. |
 
-## Dispatcher: in-house, not MediatR
+## CQRS: direct handler injection (no mediator)
 
-We use a ~30-line reflection-based dispatcher (`Application/Messaging/Sender.cs`)
-instead of MediatR. **Reason:** recent MediatR versions ship under a commercial
-license whose terms are ambiguous for this kind of personal/redistributable
-project, so rather than take on that licensing risk we wrote the minimal piece we
-actually need. It supports exactly one handler per request (no pipeline
-behaviors/streaming). `Sender` is the single seam to revisit if behaviors are ever
-required — handlers and call sites would not change.
+We keep CQRS — one command/query record + one handler per use case — but there is
+no mediator or dispatcher indirection. Each handler is registered as its concrete
+type (`AddScoped<XHandler>()`) and endpoints inject the specific handler(s) they
+need, calling `handler.Handle(message, ct)` directly. This keeps the call path
+explicit and avoids any third-party mediator dependency. Endpoints stay thin: build
+the message, invoke the handler, map the `OneOf` result.
 
 ## Configuration
 

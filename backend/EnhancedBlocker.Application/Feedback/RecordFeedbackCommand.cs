@@ -1,5 +1,4 @@
 using OneOf;
-using EnhancedBlocker.Application.Messaging;
 using EnhancedBlocker.Application.Ports;
 using EnhancedBlocker.Domain;
 
@@ -11,11 +10,9 @@ public sealed record RecordFeedbackCommand(
     string? Title,
     Decision Decision,
     LabelSource Source,
-    DateTimeOffset Ts)
-    : IRequest<OneOf<Guid, ValidationError>>;
+    DateTimeOffset Ts);
 
 public sealed class RecordFeedbackCommandHandler(ILabelStore store)
-    : IRequestHandler<RecordFeedbackCommand, OneOf<Guid, ValidationError>>
 {
     public async Task<OneOf<Guid, ValidationError>> Handle(RecordFeedbackCommand request, CancellationToken ct)
     {
