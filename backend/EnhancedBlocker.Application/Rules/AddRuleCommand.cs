@@ -1,5 +1,4 @@
 using OneOf;
-using EnhancedBlocker.Application.Messaging;
 using EnhancedBlocker.Application.Ports;
 using EnhancedBlocker.Domain;
 
@@ -11,11 +10,9 @@ public sealed record AddRuleCommand(
     MatchKind Match,
     RuleKind Kind,
     RuleSource Source,
-    string? Category)
-    : IRequest<OneOf<Rule, ValidationError>>;
+    string? Category);
 
 public sealed class AddRuleCommandHandler(IRuleRepository repository)
-    : IRequestHandler<AddRuleCommand, OneOf<Rule, ValidationError>>
 {
     public async Task<OneOf<Rule, ValidationError>> Handle(AddRuleCommand request, CancellationToken ct)
     {

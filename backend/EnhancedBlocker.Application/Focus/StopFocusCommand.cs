@@ -1,5 +1,4 @@
 using OneOf;
-using EnhancedBlocker.Application.Messaging;
 using EnhancedBlocker.Application.Ports;
 using EnhancedBlocker.Domain;
 
@@ -9,11 +8,9 @@ namespace EnhancedBlocker.Application.Focus;
 /// Stops a focus session. If <see cref="SessionId"/> is null, stops the currently active session.
 /// Returns the stopped session id.
 /// </summary>
-public sealed record StopFocusCommand(Guid? SessionId, DateTimeOffset EndedAt)
-    : IRequest<OneOf<Guid, ValidationError>>;
+public sealed record StopFocusCommand(Guid? SessionId, DateTimeOffset EndedAt);
 
 public sealed class StopFocusCommandHandler(IFocusSessionRepository repository)
-    : IRequestHandler<StopFocusCommand, OneOf<Guid, ValidationError>>
 {
     public async Task<OneOf<Guid, ValidationError>> Handle(StopFocusCommand request, CancellationToken ct)
     {

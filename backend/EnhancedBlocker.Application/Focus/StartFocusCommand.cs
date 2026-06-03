@@ -1,16 +1,13 @@
 using OneOf;
-using EnhancedBlocker.Application.Messaging;
 using EnhancedBlocker.Application.Ports;
 using EnhancedBlocker.Domain;
 
 namespace EnhancedBlocker.Application.Focus;
 
 /// <summary>Starts a focus session with a declared intent. Returns the new session id.</summary>
-public sealed record StartFocusCommand(string Intent, DateTimeOffset StartedAt)
-    : IRequest<OneOf<Guid, ValidationError>>;
+public sealed record StartFocusCommand(string Intent, DateTimeOffset StartedAt);
 
 public sealed class StartFocusCommandHandler(IFocusSessionRepository repository)
-    : IRequestHandler<StartFocusCommand, OneOf<Guid, ValidationError>>
 {
     public async Task<OneOf<Guid, ValidationError>> Handle(StartFocusCommand request, CancellationToken ct)
     {

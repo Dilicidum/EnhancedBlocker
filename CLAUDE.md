@@ -13,7 +13,7 @@ Pet project. Workflow + coding conventions below. Read before writing code or ed
   - `Infrastructure` — EF Core, PostgreSQL, external services, repository implementations. Depends on Application/Domain.
   - `Api` (Presentation) — ASP.NET Core host/endpoints. Depends on Application (+ Infrastructure via DI at composition root only).
 - **EF Core with PostgreSQL** (`Npgsql.EntityFrameworkCore.PostgreSQL`). Not SQLite.
-- **CQRS in the Application layer.** Each use case is a separate **command** (writes) or **query** (reads) with its own handler — no fat service classes. Dispatched via a mediator (e.g. MediatR) or a thin custom dispatcher. API endpoints are thin: build the command/query, send it, map the result.
+- **CQRS in the Application layer.** Each use case is a separate **command** (writes) or **query** (reads) with its own handler — no fat service classes. Handlers are **injected and invoked directly** (no mediator/dispatcher). API endpoints are thin: build the command/query, call the handler's `Handle`, map the result.
 - **OneOf** — use the `OneOf` library for results/unions where it fits (e.g. command/query results, decision outcomes, success/error returns) instead of throwing or null-returns. Handlers return `OneOf<...>`.
 - **Domain classes expose static `Create` / `Update` factory methods** for construction and mutation — no public parameterless ctors / open setters. Encapsulate invariants there.
 

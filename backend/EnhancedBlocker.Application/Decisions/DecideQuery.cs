@@ -1,20 +1,17 @@
 using OneOf;
-using EnhancedBlocker.Application.Messaging;
 using EnhancedBlocker.Application.Ports;
 using EnhancedBlocker.Domain;
 
 namespace EnhancedBlocker.Application.Decisions;
 
 /// <summary>Runs the decision cascade for a page. Returns the deciding <see cref="TierResult"/>.</summary>
-public sealed record DecideQuery(DecisionContext Context)
-    : IRequest<OneOf<TierResult, ValidationError>>;
+public sealed record DecideQuery(DecisionContext Context);
 
 /// <summary>
 /// Ordered tier cascade: the first tier that returns a <see cref="TierResult"/> (rather than
 /// <see cref="Defer"/>) wins. If every tier defers, the default is Allow.
 /// </summary>
 public sealed class DecideQueryHandler(IEnumerable<IDecisionTier> tiers)
-    : IRequestHandler<DecideQuery, OneOf<TierResult, ValidationError>>
 {
     private readonly IReadOnlyList<IDecisionTier> _tiers =
         tiers.OrderBy(t => t.Order).ToList();
