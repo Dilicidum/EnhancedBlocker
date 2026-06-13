@@ -45,7 +45,7 @@ export class BlockComponent implements OnInit {
         url: this.url(),
         title: this.title(),
         decision: 'block',
-        source: 'good-call',
+        source: 'GoodCall',
       });
     } catch {
       // Best-effort: even if the label POST fails we keep the block in place.
@@ -69,7 +69,7 @@ export class BlockComponent implements OnInit {
         url: this.url(),
         title: this.title(),
         decision: 'allow',
-        source: 'bad-call',
+        source: 'BadCall',
       });
     } catch {
       // Proceed even if the label POST fails — the user has overridden.

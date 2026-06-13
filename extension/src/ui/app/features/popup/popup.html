@@ -1,5 +1,16 @@
 <main class="popup">
-  <h1>EnhancedBlocker</h1>
+  <header class="popup-header">
+    <h1>EnhancedBlocker</h1>
+    <button
+      class="gear"
+      type="button"
+      title="Settings"
+      aria-label="Settings"
+      (click)="openSettings()"
+    >
+      ⚙
+    </button>
+  </header>
 
   <section class="status" [class.active]="store.active()">
     @if (store.active()) {

@@ -16,4 +16,13 @@ public sealed class EnhancedBlockerOptions
 
     /// <summary>When true (dev only), CORS allows any origin to ease local testing.</summary>
     public bool AllowDevOrigins { get; set; }
+
+    /// <summary>
+    /// When true, apply EF migrations on startup and seed Tier-0 rules from
+    /// <see cref="SeedRulesFile"/> if the Rules table is empty. Dev convenience; off by default.
+    /// </summary>
+    public bool AutoMigrate { get; set; }
+
+    /// <summary>Seed file with starter Tier-0 rules, relative to the content root.</summary>
+    public string SeedRulesFile { get; set; } = "seed-rules.json";
 }

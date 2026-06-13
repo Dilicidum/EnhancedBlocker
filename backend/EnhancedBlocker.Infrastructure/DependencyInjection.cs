@@ -18,6 +18,7 @@ public static class DependencyInjection
             options.UseNpgsql(connectionString));
 
         services.AddScoped<IRuleRepository, RuleRepository>();
+        services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<IEventStore, EventStore>();
         services.AddScoped<IFocusSessionRepository, FocusSessionRepository>();
         services.AddScoped<ILabelStore, LabelStore>();

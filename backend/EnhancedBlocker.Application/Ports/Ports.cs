@@ -13,6 +13,17 @@ public interface IRuleRepository
     Task<bool> DeleteAsync(Guid id, CancellationToken ct);
 }
 
+/// <summary>Persistence for the user-managed <see cref="Category"/> vocabulary.</summary>
+public interface ICategoryRepository
+{
+    Task<IReadOnlyList<Category>> ListAsync(CancellationToken ct);
+    Task<Category?> GetAsync(Guid id, CancellationToken ct);
+    Task<Category?> GetByNameAsync(string name, CancellationToken ct);
+    Task AddAsync(Category category, CancellationToken ct);
+    Task UpdateAsync(Category category, CancellationToken ct);
+    Task<bool> DeleteAsync(Guid id, CancellationToken ct);
+}
+
 /// <summary>Append-only store for tracked <see cref="Event"/>s.</summary>
 public interface IEventStore
 {

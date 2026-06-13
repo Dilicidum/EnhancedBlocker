@@ -1,4 +1,5 @@
 using EnhancedBlocker.Api.Contracts;
+using EnhancedBlocker.Application.Categories;
 using EnhancedBlocker.Application.Decisions;
 using EnhancedBlocker.Application.Events;
 using EnhancedBlocker.Application.Feedback;
@@ -109,6 +110,36 @@ public static class ApiEndpoints
             return result.Match(
                 id => Results.Ok(new StopFocusResponse(id)),
                 BadRequest);
+        });
+
+        // ---- Categories (managed vocabulary; CRUD from the settings page) ----
+
+        app.MapGet("/categories", async (ListCategoriesQueryHandler handler, CancellationToken ct) =>
+        {
+            var categories = await handler.Handle(new ListCategoriesQuery(), ct);
+            return Results.Ok(categories.Select(CategoryResponse.From));
+        });
+
+        app.MapPost("/categories", async (CategoryRequest body, AddCategoryCommandHandler handler, CancellationToken ct) =>
+        {
+            var result = await handler.Handle(new AddCategoryCommand(body.Name), ct);
+            return result.Match(
+                category => Results.Created($"/categories/{category.Id}", CategoryResponse.From(category)),
+                BadRequest);
+        });
+
+        app.MapPut("/categories/{id:guid}", async (Guid id, CategoryRequest body, UpdateCategoryCommandHandler handler, CancellationToken ct) =>
+        {
+            var result = await handler.Handle(new UpdateCategoryCommand(id, body.Name), ct);
+            return result.Match(
+                category => Results.Ok(CategoryResponse.From(category)),
+                BadRequest);
+        });
+
+        app.MapDelete("/categories/{id:guid}", async (Guid id, DeleteCategoryCommandHandler handler, CancellationToken ct) =>
+        {
+            var deleted = await handler.Handle(new DeleteCategoryCommand(id), ct);
+            return deleted ? Results.NoContent() : Results.NotFound();
         });
 
         return app;

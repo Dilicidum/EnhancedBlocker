@@ -66,3 +66,12 @@ public sealed record StartFocusResponse(Guid FocusSessionId);
 public sealed record StopFocusRequest(Guid? FocusSessionId);
 
 public sealed record StopFocusResponse(Guid FocusSessionId);
+
+// ---- Categories ----
+
+public sealed record CategoryRequest(string Name);
+
+public sealed record CategoryResponse(Guid Id, string Name)
+{
+    public static CategoryResponse From(Category c) => new(c.Id, c.Name);
+}

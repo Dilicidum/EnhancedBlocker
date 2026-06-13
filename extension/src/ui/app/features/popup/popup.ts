@@ -27,4 +27,9 @@ export class PopupComponent implements OnInit {
       void this.store.start();
     }
   }
+
+  /** Opens the full settings/options page (manifest options_page). */
+  protected openSettings(): void {
+    chrome.runtime.openOptionsPage();
+  }
 }

@@ -3,7 +3,8 @@ import { FormsModule } from '@angular/forms';
 
 import { storageGet, storageSet } from '../../core/chrome-storage';
 import { DEFAULT_API_CONFIG, STORAGE_KEYS } from '../../core/config';
-import { MatchKind, Rule, RuleKind } from '../../core/models';
+import { Category, MatchKind, Rule, RuleKind } from '../../core/models';
+import { CategoriesStore } from '../../state/categories.store';
 import { RulesStore } from '../../state/rules.store';
 
 @Component({
@@ -14,12 +15,16 @@ import { RulesStore } from '../../state/rules.store';
 })
 export class OptionsComponent implements OnInit {
   protected readonly store = inject(RulesStore);
+  protected readonly categories = inject(CategoriesStore);
 
   // New-rule form model.
   protected readonly pattern = signal('');
   protected readonly match = signal<MatchKind>('Domain');
   protected readonly kind = signal<RuleKind>('Block');
   protected readonly category = signal('');
+
+  // New-category form model.
+  protected readonly newCategory = signal('');
 
   // API connection settings.
   protected readonly baseUrl = signal(DEFAULT_API_CONFIG.baseUrl);
@@ -29,6 +34,7 @@ export class OptionsComponent implements OnInit {
   ngOnInit(): void {
     void this.hydrateSettings();
     void this.store.load();
+    void this.categories.load();
   }
 
   private async hydrateSettings(): Promise<void> {
@@ -49,17 +55,20 @@ export class OptionsComponent implements OnInit {
     setTimeout(() => this.settingsSaved.set(false), 2000);
   }
 
+  // ---- Rules ----
+
   protected addRule(): void {
     const pattern = this.pattern().trim();
     if (!pattern) {
       return;
     }
+    const category = this.category().trim();
     const rule: Rule = {
       pattern,
       match: this.match(),
       kind: this.kind(),
       source: 'manual',
-      category: this.category().trim() || null,
+      category: category || null,
     };
     void this.store.add(rule).then(() => {
       this.pattern.set('');
@@ -70,6 +79,29 @@ export class OptionsComponent implements OnInit {
   protected remove(rule: Rule): void {
     if (rule.id) {
       void this.store.remove(rule.id);
+    }
+  }
+
+  // ---- Categories ----
+
+  protected addCategory(): void {
+    const name = this.newCategory().trim();
+    if (!name) {
+      return;
+    }
+    void this.categories.add(name).then(() => this.newCategory.set(''));
+  }
+
+  protected renameCategory(cat: Category, name: string): void {
+    const trimmed = name.trim();
+    if (cat.id && trimmed && trimmed !== cat.name) {
+      void this.categories.rename(cat.id, trimmed);
+    }
+  }
+
+  protected removeCategory(cat: Category): void {
+    if (cat.id) {
+      void this.categories.remove(cat.id);
     }
   }
 }

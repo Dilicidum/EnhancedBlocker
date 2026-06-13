@@ -1,0 +1,18 @@
+// Starter Tier-0 block list, loaded once when EnhancedBlocker:AutoMigrate is on and the
+// Rules table is empty. EDIT THIS to your personal known-bad list (~20 entries) before
+// first run, or manage rules later via the extension options page.
+// Shape: { "pattern": "...", "match": "Exact"|"Domain", "kind": "Block"|"Allow", "category": "..."? }
+[
+  { "pattern": "reddit.com", "match": "Domain", "kind": "Block" },
+  { "pattern": "x.com", "match": "Domain", "kind": "Block" },
+  { "pattern": "twitter.com", "match": "Domain", "kind": "Block" },
+  { "pattern": "facebook.com", "match": "Domain", "kind": "Block" },
+  { "pattern": "instagram.com", "match": "Domain", "kind": "Block" },
+  { "pattern": "tiktok.com", "match": "Domain", "kind": "Block" },
+  { "pattern": "twitch.tv", "match": "Domain", "kind": "Block" },
+  { "pattern": "9gag.com", "match": "Domain", "kind": "Block" },
+  { "pattern": "news.ycombinator.com", "match": "Domain", "kind": "Block", "category": "news" },
+  { "pattern": "cnn.com", "match": "Domain", "kind": "Block", "category": "news" },
+  { "pattern": "bbc.com", "match": "Domain", "kind": "Block", "category": "news" },
+  { "pattern": "pravda.com.ua", "match": "Domain", "kind": "Block", "category": "news" }
+]

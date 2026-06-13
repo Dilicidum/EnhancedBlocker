@@ -1,9 +1,13 @@
 // Shared domain types mirrored from the backend API contract (TECH_PLAN.md endpoint table).
 
+// Enums travel as strings; the backend binds them case-insensitively, so lowercase is
+// fine — EXCEPT multi-word values, which must be the exact PascalCase member name
+// (e.g. 'GoodCall', never 'good-call').
 export type Outcome = 'Allow' | 'Block' | 'Pending';
 export type MatchKind = 'Exact' | 'Domain';
 export type RuleKind = 'Block' | 'Allow';
 export type FeedbackDecision = 'block' | 'allow';
+export type FeedbackSource = 'GoodCall' | 'BadCall';
 export type EventType = 'navigate' | 'active' | 'idle';
 
 /** Body sent to POST /decision. */
@@ -42,7 +46,8 @@ export interface FeedbackPayload {
   url: string;
   title?: string | null;
   decision: FeedbackDecision;
-  source: string;
+  /** Optional: the backend infers GoodCall/BadCall from the decision when omitted. */
+  source?: FeedbackSource;
 }
 
 /** A Tier-0 rule (GET/POST /rules). */
@@ -53,6 +58,12 @@ export interface Rule {
   kind: RuleKind;
   source?: string;
   category?: string | null;
+}
+
+/** A managed category in the blocking vocabulary (GET/POST/PUT/DELETE /categories). */
+export interface Category {
+  id?: string;
+  name: string;
 }
 
 export interface StartFocusResponse {

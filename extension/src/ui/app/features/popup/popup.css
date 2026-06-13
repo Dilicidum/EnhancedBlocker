@@ -7,9 +7,31 @@
   font-family: system-ui, sans-serif;
 }
 
+.popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 h1 {
   margin: 0;
   font-size: 16px;
+}
+
+.gear {
+  background: none;
+  border: none;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  color: #5f6368;
+  padding: 4px 6px;
+  border-radius: 6px;
+}
+
+.gear:hover {
+  background: #f1f3f5;
+  color: #202124;
 }
 
 .status {

@@ -36,6 +36,12 @@ the message, invoke the handler, map the `OneOf` result.
 - `EnhancedBlocker:ExtensionId` — stable `chrome-extension://<id>` allowed by CORS
   in production.
 - `EnhancedBlocker:AllowDevOrigins` — when true (dev), CORS allows any origin.
+- `EnhancedBlocker:AutoMigrate` — when true (Development default), apply EF
+  migrations on startup and seed Tier-0 rules from `SeedRulesFile` if the Rules
+  table is empty.
+- `EnhancedBlocker:SeedRulesFile` — starter block list (default `seed-rules.json`
+  in the Api project). **Edit it to your personal known-bad list**; it is only read
+  when the Rules table is empty.
 
 The design-time migration factory also honors the `EB_CONNECTION_STRING`
 environment variable.
@@ -49,13 +55,15 @@ environment variable.
 # 2. Build
 dotnet build backend/EnhancedBlocker.sln
 
-# 3. Apply the EF migration (install tools once: dotnet tool install --global dotnet-ef)
+# 3. Run the API. Development (appsettings.Development.json) uses token "dev-token"
+#    (matching the extension's default) and AutoMigrate=true, which applies the EF
+#    migration and seeds seed-rules.json on first start — no manual `dotnet ef` step.
+dotnet run --project backend/EnhancedBlocker.Api
+
+# (Manual migration alternative; install tools once: dotnet tool install --global dotnet-ef)
 dotnet ef database update \
   --project backend/EnhancedBlocker.Infrastructure \
   --startup-project backend/EnhancedBlocker.Api
-
-# 4. Run the API (Development uses appsettings.Development.json → token "dev-local-token")
-dotnet run --project backend/EnhancedBlocker.Api
 ```
 
 The API listens on `http://127.0.0.1:5180` (loopback only).
@@ -76,10 +84,17 @@ The API listens on `http://127.0.0.1:5180` (loopback only).
 
 All non-`/health` endpoints require header `X-EB-Token: <ApiToken>`.
 
+**Wire contract:** JSON is camelCase and **enums travel as strings**
+(`JsonStringEnumConverter`): `"type":"navigate"`, `"match":"Domain"`,
+`"decision":"block"`. Binding is case-insensitive, but multi-word values must be
+the exact member name — `"source":"GoodCall"`, not `"good-call"`. The endpoint
+contract tests in `EnhancedBlocker.Tests/Api/ApiContractTests.cs` pin this with
+the extension's exact payloads.
+
 ### Example
 
 ```bash
-TOKEN=dev-local-token
+TOKEN=dev-token
 curl http://127.0.0.1:5180/health
 curl -X POST http://127.0.0.1:5180/rules -H "X-EB-Token: $TOKEN" -H "Content-Type: application/json" \
   -d '{"pattern":"youtube.com","match":"Domain","kind":"Block","source":"Manual"}'

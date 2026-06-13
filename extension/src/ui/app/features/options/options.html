@@ -18,6 +18,37 @@
   </section>
 
   <section class="card">
+    <h2>Categories</h2>
+    <div class="form-row">
+      <input
+        class="grow"
+        type="text"
+        placeholder="new category (e.g. gaming)"
+        [value]="newCategory()"
+        (input)="newCategory.set($any($event.target).value)"
+        (keyup.enter)="addCategory()"
+      />
+      <button class="primary" (click)="addCategory()">Add category</button>
+    </div>
+    @if (categories.error(); as err) {
+      <p class="error">{{ err }}</p>
+    }
+    @if (categories.categories().length === 0 && !categories.loading()) {
+      <p class="muted">No categories yet.</p>
+    } @else {
+      <ul class="cat-list">
+        @for (cat of categories.categories(); track cat.id ?? cat.name) {
+          <li class="cat-row">
+            <input #catName class="grow" type="text" [value]="cat.name" />
+            <button class="secondary" (click)="renameCategory(cat, catName.value)">Save</button>
+            <button class="danger" (click)="removeCategory(cat)" [disabled]="!cat.id">Delete</button>
+          </li>
+        }
+      </ul>
+    }
+  </section>
+
+  <section class="card">
     <h2>Add Tier-0 rule</h2>
     <div class="form-row">
       <input
@@ -35,12 +66,12 @@
         <option value="Block">Block</option>
         <option value="Allow">Allow</option>
       </select>
-      <input
-        type="text"
-        placeholder="category (optional)"
-        [value]="category()"
-        (input)="category.set($any($event.target).value)"
-      />
+      <select [value]="category()" (change)="category.set($any($event.target).value)">
+        <option value="">(no category)</option>
+        @for (cat of categories.categories(); track cat.id ?? cat.name) {
+          <option [value]="cat.name">{{ cat.name }}</option>
+        }
+      </select>
       <button class="primary" (click)="addRule()">Add</button>
     </div>
   </section>

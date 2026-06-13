@@ -5,6 +5,7 @@ import { firstValueFrom } from 'rxjs';
 import { storageGet } from './chrome-storage';
 import { ApiConfig, DEFAULT_API_CONFIG, STORAGE_KEYS } from './config';
 import {
+  Category,
   FeedbackPayload,
   NavEvent,
   Rule,
@@ -84,6 +85,44 @@ export class ApiClient {
   async deleteRule(id: string): Promise<void> {
     await firstValueFrom(
       this.http.delete(await this.url(`/rules/${encodeURIComponent(id)}`), {
+        headers: await this.headers(),
+      }),
+    );
+  }
+
+  // ---- Categories --------------------------------------------------------
+
+  async listCategories(): Promise<Category[]> {
+    return await firstValueFrom(
+      this.http.get<Category[]>(await this.url('/categories'), {
+        headers: await this.headers(),
+      }),
+    );
+  }
+
+  async addCategory(name: string): Promise<Category> {
+    return await firstValueFrom(
+      this.http.post<Category>(
+        await this.url('/categories'),
+        { name },
+        { headers: await this.headers() },
+      ),
+    );
+  }
+
+  async updateCategory(id: string, name: string): Promise<Category> {
+    return await firstValueFrom(
+      this.http.put<Category>(
+        await this.url(`/categories/${encodeURIComponent(id)}`),
+        { name },
+        { headers: await this.headers() },
+      ),
+    );
+  }
+
+  async deleteCategory(id: string): Promise<void> {
+    await firstValueFrom(
+      this.http.delete(await this.url(`/categories/${encodeURIComponent(id)}`), {
         headers: await this.headers(),
       }),
     );

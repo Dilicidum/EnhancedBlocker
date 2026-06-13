@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using EnhancedBlocker.Application.Categories;
 using EnhancedBlocker.Application.Decisions;
 using EnhancedBlocker.Application.Events;
 using EnhancedBlocker.Application.Feedback;
@@ -18,6 +19,10 @@ public static class DependencyInjection
         services.AddScoped<ListRulesQueryHandler>();
         services.AddScoped<AddRuleCommandHandler>();
         services.AddScoped<DeleteRuleCommandHandler>();
+        services.AddScoped<ListCategoriesQueryHandler>();
+        services.AddScoped<AddCategoryCommandHandler>();
+        services.AddScoped<UpdateCategoryCommandHandler>();
+        services.AddScoped<DeleteCategoryCommandHandler>();
         services.AddScoped<StartFocusCommandHandler>();
         services.AddScoped<StopFocusCommandHandler>();
 

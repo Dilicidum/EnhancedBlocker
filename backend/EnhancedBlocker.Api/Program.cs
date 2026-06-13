@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using EnhancedBlocker.Api.Configuration;
 using EnhancedBlocker.Api.Endpoints;
 using EnhancedBlocker.Api.Middleware;
@@ -5,6 +6,11 @@ using EnhancedBlocker.Application;
 using EnhancedBlocker.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// ---- Wire contract: enums travel as strings ("navigate", "Domain", "GoodCall") ----
+// Reading is case-insensitive; without this, the extension's string enums fail binding (400).
+builder.Services.ConfigureHttpJsonOptions(json =>
+    json.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
 // ---- Configuration ----
 builder.Services
@@ -51,6 +57,10 @@ app.UseCors(CorsPolicy);
 app.UseMiddleware<TokenAuthMiddleware>();
 
 app.MapApiEndpoints();
+
+// Dev convenience (gated by EnhancedBlocker:AutoMigrate): apply migrations and seed
+// starter Tier-0 rules so a fresh clone blocks something without manual psql/ef steps.
+await DatabaseInitializer.MigrateAndSeedAsync(app);
 
 app.Run();
 

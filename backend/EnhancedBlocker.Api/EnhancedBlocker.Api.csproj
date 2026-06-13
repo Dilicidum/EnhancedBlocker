@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <ItemGroup>
     <ProjectReference Include="..\EnhancedBlocker.Infrastructure\EnhancedBlocker.Infrastructure.csproj" />
@@ -13,10 +13,15 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="seed-rules.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>bae25543-a752-4ddb-b66b-d02ccf07d54f</UserSecretsId>
   </PropertyGroup>
 
 </Project>

@@ -9,6 +9,7 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
     public DbSet<Event> Events => Set<Event>();
     public DbSet<FocusSession> FocusSessions => Set<FocusSession>();
     public DbSet<Rule> Rules => Set<Rule>();
+    public DbSet<Category> Categories => Set<Category>();
     public DbSet<CategoryDomain> CategoryDomains => Set<CategoryDomain>();
     public DbSet<Label> Labels => Set<Label>();
     public DbSet<DecisionLog> DecisionLogs => Set<DecisionLog>();
